@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -21,7 +21,6 @@ namespace NodeGrabber
         public GrabAttribute(string path = null)
         {
             Path = path;
-            // howdy!
         }
     }
 }
@@ -50,7 +49,7 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
     {{
         void GrabNodes()
         {{
-            // {string.Join("; ", source.Fields.Select(f => f.ToDisplayString()))}
+            // spam {string.Join("; ", source.Fields.Select(f => f.ToDisplayString()))}
         }}
     }}
 }}
@@ -71,9 +70,10 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             var fields = classNode
                 .DescendantNodes()
                 .OfType<FieldDeclarationSyntax>()
-                .Select(f => context.SemanticModel.GetSymbolInfo(f).Symbol)
-                .Where(f => f?.ContainingType?.ToDisplayString() == "NodeGrabber.GrabAttribute")
-                .ToList();
+                .Select(f => context.SemanticModel.GetDeclaredSymbol(f))
+                .Where(f => f != null)
+                //.Where(f => f?.ContainingType?.ToDisplayString() == "NodeGrabber.GrabAttribute")
+                .ToImmutableList();
             //if (!fields.Any())
             //    return null;
 
@@ -92,9 +92,9 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
         class ClassAndFields
         {
             public readonly ISymbol ClassDec;
-            public readonly List<ISymbol> Fields;
+            public readonly ImmutableList<ISymbol> Fields;
 
-            public ClassAndFields(ISymbol classDec, List<ISymbol> fields)
+            public ClassAndFields(ISymbol classDec, ImmutableList<ISymbol> fields)
             {
                 ClassDec = classDec;
                 Fields = fields;
