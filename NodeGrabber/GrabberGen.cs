@@ -107,12 +107,10 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
 
             bool hasAttribute(SyntaxNode node)
             {
-                var atts =
-                    (node as FieldDeclarationSyntax)?.AttributeLists
-                    ?? (node as PropertyDeclarationSyntax)?.AttributeLists;
+                var atts = node.DescendantNodes().OfType<AttributeSyntax>();
                 if (atts is null)
                     return false;
-                foreach (var att in atts.Value.SelectMany(l => l.Attributes))
+                foreach (var att in atts)
                 {
                     var attSym = context.SemanticModel.GetSymbolInfo(att).Symbol as IMethodSymbol;
                     if (attSym == null)
