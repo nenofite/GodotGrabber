@@ -1,6 +1,9 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodeGrabber;
+using System;
+using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using VerifyMSTest;
@@ -15,6 +18,7 @@ public class Tests : VerifyBase
     public Task Basics() =>
         GenerateAndVerify(
             @"
+using System;
 using NodeGrabber;
 
 namespace Foobar.Biz
@@ -39,7 +43,11 @@ namespace Foobar.Biz
     Task GenerateAndVerify(string src)
     {
         var syntax = CSharpSyntaxTree.ParseText(src);
-        var compilation = CSharpCompilation.Create("Tests", syntaxTrees: new[] { syntax });
+        var compilation = CSharpCompilation.Create(
+            "Tests",
+            syntaxTrees: new[] { syntax },
+            references: new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) }
+        );
         var generator = new GrabberGen();
         var driver = CSharpGeneratorDriver.Create(generator).RunGenerators(compilation);
 

@@ -5,7 +5,10 @@ namespace GrabberTest
     internal partial class Program
     {
         [Grab]
-        int baoana;
+        int beena;
+
+        [Grab]
+        int fooba;
 
         static void Main(string[] args)
         {
