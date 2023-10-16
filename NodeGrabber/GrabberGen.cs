@@ -24,7 +24,7 @@ namespace NodeGrabber
         }
     }
 }
-        ";
+";
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
@@ -39,6 +39,15 @@ namespace NodeGrabber
             context.RegisterSourceOutput(ls, EmitClasses);
         }
 
+        static bool HasClassWithAttribute(SyntaxNode node, CancellationToken token)
+        {
+            return node is ClassDeclarationSyntax
+                && node.DescendantNodes()
+                    .OfType<FieldDeclarationSyntax>()
+                    //.Where(f => f.AttributeLists.Any())
+                    .Any();
+        }
+
         static void EmitClasses(SourceProductionContext context, ClassAndFields source)
         {
             var src =
@@ -49,12 +58,26 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
     {{
         void GrabNodes()
         {{
-            // spam {string.Join("; ", source.Fields.Select(f => f.ToDisplayString()))}
+            {string.Join("\n", source.Fields.Select(EmitField))}
         }}
     }}
 }}
 ";
             context.AddSource($"{source.ClassDec.ToDisplayString()}_Grabber.g.cs", src);
+        }
+
+        static string EmitField(ISymbol field)
+        {
+            var localName = field.Name;
+            ITypeSymbol type;
+            if (field is IFieldSymbol f)
+                type = f.Type;
+            else if (field is IPropertySymbol p)
+                type = p.Type;
+            else
+                return "// nop";
+
+            return $"{localName} = GetNode<{type.ToDisplayString()}>(\"%{localName}\");";
         }
 
         static ClassAndFields TransformClasses(
@@ -69,7 +92,10 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             var classDec = context.SemanticModel.GetDeclaredSymbol(classNode);
             var fields = classNode
                 .DescendantNodes()
-                .OfType<FieldDeclarationSyntax>()
+                .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
+                //.OfType<FieldDeclarationSyntax>()
+                .SelectMany(n => n.DescendantNodes())
+                .OfType<VariableDeclaratorSyntax>()
                 .Select(f => context.SemanticModel.GetDeclaredSymbol(f))
                 .Where(f => f != null)
                 //.Where(f => f?.ContainingType?.ToDisplayString() == "NodeGrabber.GrabAttribute")
@@ -78,15 +104,6 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             //    return null;
 
             return new ClassAndFields(classDec, fields);
-        }
-
-        static bool HasClassWithAttribute(SyntaxNode node, CancellationToken token)
-        {
-            return node is ClassDeclarationSyntax
-                && node.DescendantNodes()
-                    .OfType<FieldDeclarationSyntax>()
-                    .Where(f => f.AttributeLists.Any())
-                    .Any();
         }
 
         class ClassAndFields
@@ -100,22 +117,5 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
                 Fields = fields;
             }
         }
-
-        //public void Execute(GeneratorExecutionContext context)
-        //{
-        //    // var targets = context.Compilation.SyntaxTrees.SelectMany(st =>
-        //    //     st.GetRoot()
-        //    //     .DescendantNodes()
-        //    //     .OfType<ClassDeclarationSyntax>()
-        //    //     .SelectMany(x => x.DescendantNodes())
-        //    //     .OfType<MemberDeclarationSyntax>()
-        //    //     .Where(m => m.AttributeLists.Any(atts => atts.Attributes.Any(att => att.Name.Span.Equals("Grab"))))
-        //    // );
-        //}
-
-        //public void Initialize(GeneratorInitializationContext context)
-        //{
-        //    context.RegisterForPostInitialization(x => x.AddSource("GrabberGen.g.cs", AttributeCs));
-        //}
     }
 }
