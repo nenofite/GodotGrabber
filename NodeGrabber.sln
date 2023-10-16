@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeGrabber", "NodeGrabber\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrabberTest", "GrabberTest\GrabberTest.csproj", "{050BB356-3E78-492C-A627-6103543F4F51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenTest", "GenTest\GenTest.csproj", "{15359635-68FC-408E-81D5-682530A9A94D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{050BB356-3E78-492C-A627-6103543F4F51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{050BB356-3E78-492C-A627-6103543F4F51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050BB356-3E78-492C-A627-6103543F4F51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15359635-68FC-408E-81D5-682530A9A94D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15359635-68FC-408E-81D5-682530A9A94D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15359635-68FC-408E-81D5-682530A9A94D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15359635-68FC-408E-81D5-682530A9A94D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
