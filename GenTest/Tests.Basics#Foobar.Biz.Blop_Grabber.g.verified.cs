@@ -8,6 +8,7 @@ namespace Foobar.Biz
         {
 ShouldInclude = GetNode<int>("%ShouldInclude");
 ShouldIncludeQualType = GetNode<System.Text.StringBuilder>("%ShouldIncludeQualType");
+withPath = GetNode<bool>("special path");
         }
     }
 }

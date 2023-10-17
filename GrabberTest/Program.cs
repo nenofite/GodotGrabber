@@ -7,7 +7,7 @@ namespace GrabberTest
         [Grab]
         int beena;
 
-        [Grab]
+        [Grab("aaa")]
         int fooba;
 
         static void Main(string[] args)

@@ -35,6 +35,9 @@ namespace Foobar.Biz
 
         [Grab]
         System.Text.StringBuilder ShouldIncludeQualType;
+
+        [Grab(""special path"")]
+        bool withPath;
     }
 }
 "

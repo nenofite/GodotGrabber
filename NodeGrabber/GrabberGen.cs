@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NodeGrabber
@@ -36,7 +39,7 @@ namespace NodeGrabber
 
             var ls = context.SyntaxProvider.CreateSyntaxProvider(
                 predicate: HasClassWithAttribute,
-                transform: TransformClasses
+                transform: TransformClass
             );
             context.RegisterSourceOutput(ls, EmitClasses);
         }
@@ -69,8 +72,9 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             context.AddSource($"{source.ClassDec.ToDisplayString()}_Grabber.g.cs", src);
         }
 
-        static string EmitField(ISymbol field)
+        static string EmitField((ISymbol, string path) t)
         {
+            var (field, path) = t;
             var localName = field.Name;
             ITypeSymbol type;
             if (field is IFieldSymbol f)
@@ -80,10 +84,10 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             else
                 return "// nop";
 
-            return $"{localName} = GetNode<{type.ToDisplayString()}>(\"%{localName}\");";
+            return $"{localName} = GetNode<{type.ToDisplayString()}>(\"{path}\");";
         }
 
-        static ClassAndFields TransformClasses(
+        static ClassAndFields TransformClass(
             GeneratorSyntaxContext context,
             CancellationToken token
         )
@@ -96,38 +100,71 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             var fields = classNode
                 .DescendantNodes()
                 .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
-                .Where(hasAttribute)
-                .SelectMany(n => n.DescendantNodes())
-                .OfType<VariableDeclaratorSyntax>()
-                .Select(f => context.SemanticModel.GetDeclaredSymbol(f))
-                .Where(f => f != null)
+                .SelectMany(extractFields)
                 .ToImmutableList();
 
             return new ClassAndFields(classDec, fields);
 
-            bool hasAttribute(SyntaxNode node)
+            IEnumerable<(ISymbol field, string path)> extractFields(SyntaxNode node)
             {
                 var atts = node.DescendantNodes().OfType<AttributeSyntax>();
-                if (atts is null)
-                    return false;
+                string pathOverride = null;
+
                 foreach (var att in atts)
                 {
                     var attSym = context.SemanticModel.GetSymbolInfo(att).Symbol as IMethodSymbol;
                     if (attSym == null)
                         continue;
-                    if (attSym.ContainingType?.ToDisplayString() == "NodeGrabber.GrabAttribute")
-                        return true;
+                    if (attSym.ContainingType?.ToDisplayString() != "NodeGrabber.GrabAttribute")
+                        continue;
+
+                    pathOverride = ExtractPathFromAttribute(att);
+                    goto foundAtt;
                 }
-                return false;
+                yield break;
+
+                foundAtt:
+                foreach (var n in node.DescendantNodes())
+                {
+                    if (n is VariableDeclaratorSyntax f)
+                    {
+                        var sym = context.SemanticModel.GetDeclaredSymbol(f);
+                        if (sym == null)
+                            continue;
+
+                        yield return (sym, pathOverride ?? "%" + sym.Name);
+                    }
+                }
             }
+        }
+
+        static string ExtractPathFromAttribute(AttributeSyntax att)
+        {
+            var argNodes = att.ArgumentList?.Arguments.FirstOrDefault()?.DescendantNodes();
+            if (argNodes == null)
+                return null;
+
+            foreach (var n in argNodes)
+            {
+                if (
+                    n is LiteralExpressionSyntax lit
+                    && lit.Kind() == SyntaxKind.StringLiteralExpression
+                )
+                {
+                    if (lit.Token.Value is string name)
+                        return name;
+                }
+            }
+
+            return null;
         }
 
         class ClassAndFields
         {
             public readonly ISymbol ClassDec;
-            public readonly ImmutableList<ISymbol> Fields;
+            public readonly ImmutableList<(ISymbol, string path)> Fields;
 
-            public ClassAndFields(ISymbol classDec, ImmutableList<ISymbol> fields)
+            public ClassAndFields(ISymbol classDec, ImmutableList<(ISymbol, string path)> fields)
             {
                 ClassDec = classDec;
                 Fields = fields;
