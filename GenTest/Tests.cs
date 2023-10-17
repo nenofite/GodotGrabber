@@ -44,6 +44,32 @@ namespace Foobar.Biz
         );
 
     [TestMethod]
+    public Task NoNamespace() =>
+        GenerateAndVerify(
+            @"
+using System;
+using NodeGrabber;
+
+internal partial class Blop
+{
+    [Grab]
+    int ShouldInclude;
+
+    [Grab]
+    bool ShouldWorkWithProperties {get; private set;}
+        
+    public string ShouldSkipNoAttribute;
+
+    [Grab]
+    System.Text.StringBuilder ShouldIncludeQualType;
+
+    [Grab(""special path"")]
+    bool withPath;
+}
+"
+        );
+
+    [TestMethod]
     public Task NoOutput() =>
         GenerateAndVerify(
             @"

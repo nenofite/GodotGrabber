@@ -61,17 +61,27 @@ namespace NodeGrabber
 
             var src =
                 $@"
-namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
+partial class {source.ClassDec.Name}
 {{
-    partial class {source.ClassDec.Name}
+    void GrabNodes()
     {{
-        void GrabNodes()
-        {{
 {string.Join("\n", source.Fields.Select(EmitField))}
-        }}
     }}
 }}
 ";
+
+            var showNs = !source.ClassDec.ContainingNamespace.IsGlobalNamespace;
+            if (showNs)
+            {
+                src =
+                    $@"
+namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
+{{
+{src}
+}}
+";
+            }
+
             context.AddSource($"{source.ClassDec.ToDisplayString()}_Grabber.g.cs", src);
         }
 
