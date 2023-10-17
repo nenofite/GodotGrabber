@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 *.received.*
+/.vs/NodeGrabber/v17/.suo
