@@ -6,8 +6,8 @@ namespace Foobar.Biz
     {
         void GrabNodes()
         {
-// ShouldInclude = GetNode<int>("%ShouldInclude");
-// ShouldIncludeQualType = GetNode<System.Text.StringBuilder>("%ShouldIncludeQualType");
+ShouldInclude = GetNode<int>("%ShouldInclude");
+ShouldIncludeQualType = GetNode<System.Text.StringBuilder>("%ShouldIncludeQualType");
         }
     }
 }

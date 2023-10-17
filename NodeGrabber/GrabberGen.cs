@@ -80,7 +80,7 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             else
                 return "// nop";
 
-            return $"// {localName} = GetNode<{type.ToDisplayString()}>(\"%{localName}\");";
+            return $"{localName} = GetNode<{type.ToDisplayString()}>(\"%{localName}\");";
         }
 
         static ClassAndFields TransformClasses(
