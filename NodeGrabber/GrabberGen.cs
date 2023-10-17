@@ -56,6 +56,9 @@ namespace NodeGrabber
 
         static void EmitClasses(SourceProductionContext context, ClassAndFields source)
         {
+            if (source == null)
+                return;
+
             var src =
                 $@"
 namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
@@ -102,6 +105,9 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
                 .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
                 .SelectMany(extractFields)
                 .ToImmutableList();
+
+            if (!fields.Any())
+                return null;
 
             return new ClassAndFields(classDec, fields);
 

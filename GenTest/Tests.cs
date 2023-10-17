@@ -43,6 +43,25 @@ namespace Foobar.Biz
 "
         );
 
+    [TestMethod]
+    public Task NoOutput() =>
+        GenerateAndVerify(
+            @"
+using System;
+using NodeGrabber;
+
+namespace Foobar.Biz
+{
+    internal partial class Blop
+    {
+        [SomethingElse]
+        int Nothing;
+        string NotThisEither {get; set;}
+    }
+}
+"
+        );
+
     Task GenerateAndVerify(string src)
     {
         var syntax = CSharpSyntaxTree.ParseText(src);
