@@ -13,13 +13,16 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
+	  
     <Authors>Benjamin Tucker</Authors>
     <PackageId>Nenofite.GodotGrabber</PackageId>
     <Version>1.1.0</Version>
     <Description>Provides a [Grab] attribute so you can skip the boilerplate of grabbing references to nodes. Lightweight, opinionated, and reflection-free.</Description>
     <PackageTags>godot</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright>© Benjamin Tucker 2024</Copyright>
+    <Copyright>Copyright © 2024 Benjamin Tucker</Copyright>
+    <RepositoryUrl>https://github.com/nenofite/GodotGrabber</RepositoryUrl>
+	<PackageProjectUrl>https://github.com/nenofite/GodotGrabber</PackageProjectUrl>
   </PropertyGroup>
   
   <ItemGroup>
