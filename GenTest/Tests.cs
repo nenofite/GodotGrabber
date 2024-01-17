@@ -1,9 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NodeGrabber;
+using Nenofite.GodotGrabber;
 using System;
-using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using VerifyMSTest;
@@ -19,7 +18,7 @@ public class Tests : VerifyBase
         GenerateAndVerify(
             @"
 using System;
-using NodeGrabber;
+using Nenofite.GodotGrabber;
 
 namespace Foobar.Biz
 {
@@ -48,7 +47,7 @@ namespace Foobar.Biz
         GenerateAndVerify(
             @"
 using System;
-using NodeGrabber;
+using Nenofite.GodotGrabber;
 
 internal partial class Blop
 {
@@ -74,7 +73,7 @@ internal partial class Blop
         GenerateAndVerify(
             @"
 using System;
-using NodeGrabber;
+using Nenofite.GodotGrabber;
 
 namespace Foobar.Biz
 {
