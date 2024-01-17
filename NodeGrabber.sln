@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GodotGrabber", "NodeGrabber\GodotGrabber.csproj", "{B6BE89EC-E938-4B69-8C42-9FFDC02C4AA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GodotGrabber", "GodotGrabber\GodotGrabber.csproj", "{B6BE89EC-E938-4B69-8C42-9FFDC02C4AA1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrabberTest", "GrabberTest\GrabberTest.csproj", "{050BB356-3E78-492C-A627-6103543F4F51}"
 EndProject
