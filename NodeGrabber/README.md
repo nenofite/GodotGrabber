@@ -1,21 +1,21 @@
 # Godot Grabber
 
-Godot Grabber is a source generator for Godot C# scripts. Use it to reduce boilerplate when grabbing nodes within a script:
+Godot Grabber is a source generator for Godot C# scripts. It reduces boilerplate when getting nodes within a script:
 
 ```cs
 partial class MyNode : Node
 {
-    // This will grab a scene-unique node named "%CharacterSprite"
+    // This will get a scene-unique node named "%CharacterSprite"
     [Grab]
     Sprite2D CharacterSprite;
 
-    // This will grab a node at path "Other/Sprite"
+    // This will get a node at path "Other/Sprite"
     [Grab(Path = "Other/Sprite")]
     Sprite2D EnemySprite;
 
     public override void _Ready()
     {
-        // Call within _Ready() to actually bind the above nodes
+        // Call within _Ready() to actually get the above nodes
         GrabNodes();
     }
 }
