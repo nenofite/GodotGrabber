@@ -17,17 +17,19 @@
     <Authors>Benjamin Tucker</Authors>
     <PackageId>Nenofite.GodotGrabber</PackageId>
     <Version>1.1.0</Version>
-    <Description>Provides a [Grab] attribute so you can skip the boilerplate of grabbing references to nodes. Lightweight, opinionated, and reflection-free.</Description>
+    <Description>Provides a [Grab] attribute so you can skip the boilerplate of getting nodes. Lightweight, opinionated, and reflection-free.</Description>
     <PackageTags>godot</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright © 2024 Benjamin Tucker</Copyright>
     <RepositoryUrl>https://github.com/nenofite/GodotGrabber</RepositoryUrl>
 	<PackageProjectUrl>https://github.com/nenofite/GodotGrabber</PackageProjectUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   
   <ItemGroup>
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	<None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
