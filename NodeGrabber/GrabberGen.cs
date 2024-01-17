@@ -67,7 +67,7 @@ namespace NodeGrabber
 partial class {source.ClassDec.Name}
 {{
     /// <summary>
-    /// Set the values of all fields marked with <tt>[Grab]</tt>. You should usually call this in <tt>_Ready()</tt>.
+    /// Set the values of all fields marked with <c>[Grab]</c>. You should usually call this in <c>_Ready()</c>.
     /// 
     /// The current value of each field will be overwritten.
     /// </summary>
