@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NodeGrabber\NodeGrabber.csproj" />
+    <ProjectReference Include="..\NodeGrabber\GodotGrabber.csproj" />
   </ItemGroup>
 
 </Project>

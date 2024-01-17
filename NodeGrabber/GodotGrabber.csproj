@@ -13,10 +13,15 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <Title>Godot Node Grabber</Title>
-    <Authors>Benjamin Tucker</Authors> <!-- Do not include the generator as a lib dependency -->
+    <Authors>Benjamin Tucker</Authors>
+    <PackageId>Nenofite.GodotGrabber</PackageId>
+    <Version>1.1.0</Version>
+    <Description>Provides a [Grab] attribute so you can skip the boilerplate of grabbing references to nodes. Lightweight, opinionated, and reflection-free.</Description>
+    <PackageTags>godot</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>© Benjamin Tucker 2024</Copyright>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
