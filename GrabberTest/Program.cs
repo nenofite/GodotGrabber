@@ -1,4 +1,4 @@
-﻿using NodeGrabber;
+﻿using Nenofite.GodotGrabber;
 
 namespace GrabberTest
 {
