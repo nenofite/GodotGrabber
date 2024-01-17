@@ -142,7 +142,10 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
                     var attSym = context.SemanticModel.GetSymbolInfo(att).Symbol as IMethodSymbol;
                     if (attSym == null)
                         continue;
-                    if (attSym.ContainingType?.ToDisplayString() != "NodeGrabber.GrabAttribute")
+                    if (
+                        attSym.ContainingType?.ToDisplayString()
+                        != "Nenofite.GodotGrabber.GrabAttribute"
+                    )
                         continue;
 
                     pathOverride = ExtractPathFromAttribute(att);
