@@ -10,7 +10,7 @@ partial class MyNode : Node
     Sprite2D CharacterSprite;
 
     // This will get a node at path "Other/Sprite"
-    [Grab(Path = "Other/Sprite")]
+    [Grab("Other/Sprite")]
     Sprite2D EnemySprite;
 
     public override void _Ready()
@@ -31,11 +31,11 @@ Because the nodes are scene unique, you can move them within the hierarchy of th
 
 ## Custom paths
 
-If you'd like to specify a custom path instead, pass `Path` to the attribute:
+If you'd like to specify a custom path instead, pass a path to the attribute:
 
 ```cs
-[Grab(Path = "Other/Sprite")]
+[Grab("Other/Sprite")]
 Sprite2D EnemySprite;
 ```
 
-The `Path` string is passed directly to `Node.GetNode()`, so it supports the usual [NodePath](https://docs.godotengine.org/en/stable/classes/class_nodepath.html#class-nodepath) syntax.
+The path string is passed directly to `Node.GetNode()`, so it supports the usual [NodePath](https://docs.godotengine.org/en/stable/classes/class_nodepath.html#class-nodepath) syntax.

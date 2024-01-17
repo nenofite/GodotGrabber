@@ -11,7 +11,7 @@
   </ItemGroup>
   
   <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
 	  
     <Authors>Benjamin Tucker</Authors>
