@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -59,13 +60,20 @@ namespace NodeGrabber
             if (source == null)
                 return;
 
+            const string indent = "        ";
+
             var src =
                 $@"
 partial class {source.ClassDec.Name}
 {{
+    /// <summary>
+    /// Set the values of all fields marked with <tt>[Grab]</tt>. You should usually call this in <tt>_Ready()</tt>.
+    /// 
+    /// The current value of each field will be overwritten.
+    /// </summary>
     void GrabNodes()
     {{
-{string.Join("\n", source.Fields.Select(EmitField))}
+{formatLines(source.Fields.Select(EmitField))}
     }}
 }}
 ";
@@ -83,6 +91,11 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             }
 
             context.AddSource($"{source.ClassDec.ToDisplayString()}_Grabber.g.cs", src);
+
+            string formatLines(IEnumerable<string> lines)
+            {
+                return string.Join("\n", lines.Select(ln => indent + ln));
+            }
         }
 
         static string EmitField((ISymbol, string path) t)
@@ -107,7 +120,7 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
         {
             var classNode = context.Node as ClassDeclarationSyntax;
             if (classNode == null)
-                throw new Exception("huh?");
+                throw new Exception($"Unexpected node {context.Node}");
 
             var classDec = context.SemanticModel.GetDeclaredSymbol(classNode);
             var fields = classNode
