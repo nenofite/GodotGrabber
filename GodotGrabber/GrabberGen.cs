@@ -118,7 +118,7 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
         {
             var classNode = context.Node as ClassDeclarationSyntax;
             if (classNode == null)
-                throw new Exception($"Unexpected node {context.Node}");
+                return null;
 
             var classDec = context.SemanticModel.GetDeclaredSymbol(classNode);
             var fields = classNode
