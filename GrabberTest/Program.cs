@@ -19,5 +19,7 @@ namespace GrabberTest
         {
             GrabNodes();
         }
+
+        static T GetNode<T>(string path) => default;
     }
 }
