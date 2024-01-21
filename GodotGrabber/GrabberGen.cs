@@ -63,7 +63,7 @@ namespace Nenofite.GodotGrabber
             return node.DescendantNodes()
                 .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
                 .SelectMany(n => n.DescendantNodes())
-                .Where(n => n is AttributeSyntax attr)
+                .Where(n => n is AttributeSyntax attr && attr.Name.ToString() == "Grab")
                 .Any();
         }
 
