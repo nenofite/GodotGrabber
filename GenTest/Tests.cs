@@ -72,6 +72,23 @@ internal partial class Blop
         );
 
     [TestMethod]
+    public Task AllWithDots() =>
+        GenerateAndVerify(
+            @"
+using System;
+
+internal partial class Fruit
+{
+    [Nenofite.GodotGrabber.Grab]
+    string Apple;
+
+    [Nenofite.GodotGrabber.Grab(""../Banana"")]
+    int Banana;
+}
+"
+        );
+
+    [TestMethod]
     public Task NoOutput() =>
         GenerateAndVerify(
             @"
