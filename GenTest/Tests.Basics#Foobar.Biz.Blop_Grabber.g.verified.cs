@@ -14,6 +14,7 @@ partial class Blop
     {
         ShouldInclude = GetNode<int>("%ShouldInclude");
         ShouldIncludeQualType = GetNode<System.Text.StringBuilder>("%ShouldIncludeQualType");
+        WorksWithDots = GetNode<string>("%WorksWithDots");
         withPath = GetNode<bool>("special path");
     }
 }

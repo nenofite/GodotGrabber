@@ -35,6 +35,9 @@ namespace Foobar.Biz
         [Grab]
         System.Text.StringBuilder ShouldIncludeQualType;
 
+        [Nenofite.GodotGrabber.Grab]
+        string WorksWithDots;
+
         [Grab(""special path"")]
         bool withPath;
     }
