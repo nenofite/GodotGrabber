@@ -16,7 +16,7 @@
 	  
     <Authors>Benjamin Tucker</Authors>
     <PackageId>Nenofite.GodotGrabber</PackageId>
-    <Version>1.2.6</Version>
+    <Version>1.2.7</Version>
     <Description>Provides a [Grab] attribute so you can skip the boilerplate of getting nodes. Lightweight, opinionated, and reflection-free.</Description>
     <PackageTags>godot</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
