@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Nenofite.GodotGrabber
 {
     [Generator(LanguageNames.CSharp)]
-    public class GrabberGen : IIncrementalGenerator
+    public class GrabberGen : ISourceGenerator
     {
         public const string AttributeCs =
             @"
@@ -30,30 +29,45 @@ namespace Nenofite.GodotGrabber
 }
 ";
 
-        public void Initialize(IncrementalGeneratorInitializationContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
-            context.RegisterPostInitializationOutput(
-                x => x.AddSource("GrabberGen.g.cs", AttributeCs)
-            );
-
-            var ls = context.SyntaxProvider.CreateSyntaxProvider(
-                predicate: HasClassWithAttribute,
-                transform: TransformClass
-            );
-            context.RegisterSourceOutput(ls, EmitClasses);
+            context.RegisterForPostInitialization(ctx =>
+            {
+                ctx.AddSource("GrabberGen.g.cs", AttributeCs);
+            });
         }
 
-        static bool HasClassWithAttribute(SyntaxNode node, CancellationToken token)
+        public void Execute(GeneratorExecutionContext context)
         {
-            return node is ClassDeclarationSyntax
-                && node.DescendantNodes()
-                    .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
-                    .SelectMany(n => n.DescendantNodes())
-                    .Where(n => n is AttributeSyntax)
-                    .Any();
+            var classesWithAttrs = context.Compilation.SyntaxTrees
+                .SelectMany(
+                    tree =>
+                        tree.GetRoot()
+                            .DescendantNodesAndSelf()
+                            .OfType<ClassDeclarationSyntax>()
+                            .Where(HasClassWithAttribute)
+                )
+                .ToArray();
+
+            foreach (var node in classesWithAttrs)
+            {
+                var gf = FindGrabFields(node, context);
+                if (gf == null)
+                    continue;
+                EmitClassImpl(context, gf);
+            }
         }
 
-        static void EmitClasses(SourceProductionContext context, ClassAndFields source)
+        static bool HasClassWithAttribute(ClassDeclarationSyntax node)
+        {
+            return node.DescendantNodes()
+                .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
+                .SelectMany(n => n.DescendantNodes())
+                .Where(n => n is AttributeSyntax attr)
+                .Any();
+        }
+
+        static void EmitClassImpl(GeneratorExecutionContext context, ClassWithGrabFields source)
         {
             if (source == null)
                 return;
@@ -111,16 +125,13 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             return $"{localName} = GetNode<{type.ToDisplayString()}>(\"{path}\");";
         }
 
-        static ClassAndFields TransformClass(
-            GeneratorSyntaxContext context,
-            CancellationToken token
+        static ClassWithGrabFields FindGrabFields(
+            ClassDeclarationSyntax classNode,
+            GeneratorExecutionContext context
         )
         {
-            var classNode = context.Node as ClassDeclarationSyntax;
-            if (classNode == null)
-                return null;
-
-            var classDec = context.SemanticModel.GetDeclaredSymbol(classNode);
+            var sem = context.Compilation.GetSemanticModel(classNode.SyntaxTree);
+            var classDec = sem.GetDeclaredSymbol(classNode);
             var fields = classNode
                 .DescendantNodes()
                 .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
@@ -130,7 +141,7 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             if (!fields.Any())
                 return null;
 
-            return new ClassAndFields(classDec, fields);
+            return new ClassWithGrabFields(classDec, fields);
 
             IEnumerable<(ISymbol field, string path)> extractFields(SyntaxNode node)
             {
@@ -139,7 +150,7 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
 
                 foreach (var att in atts)
                 {
-                    var attSym = context.SemanticModel.GetSymbolInfo(att).Symbol as IMethodSymbol;
+                    var attSym = sem.GetSymbolInfo(att).Symbol as IMethodSymbol;
                     if (attSym == null)
                         continue;
                     if (
@@ -158,7 +169,7 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
                 {
                     if (n is VariableDeclaratorSyntax f)
                     {
-                        var sym = context.SemanticModel.GetDeclaredSymbol(f);
+                        var sym = sem.GetDeclaredSymbol(f);
                         if (sym == null)
                             continue;
 
@@ -189,12 +200,15 @@ namespace {source.ClassDec.ContainingNamespace.ToDisplayString()}
             return null;
         }
 
-        class ClassAndFields
+        class ClassWithGrabFields
         {
             public readonly ISymbol ClassDec;
             public readonly ImmutableList<(ISymbol, string path)> Fields;
 
-            public ClassAndFields(ISymbol classDec, ImmutableList<(ISymbol, string path)> fields)
+            public ClassWithGrabFields(
+                ISymbol classDec,
+                ImmutableList<(ISymbol, string path)> fields
+            )
             {
                 ClassDec = classDec;
                 Fields = fields;
